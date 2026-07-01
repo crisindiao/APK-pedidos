@@ -22,7 +22,7 @@
 }
 </script>
 
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
 
 <style>
   html, body { margin: 0; padding: 0; background: #FDF8F6; }
@@ -35,13 +35,18 @@
 
 <script>
   // Mostra qualquer erro de carregamento na tela em vez de travar num "Carregando..." eterno
-  window.addEventListener("error", function (e) {
+  function showBootError(title, details) {
     var el = document.getElementById("boot-status");
-    if (el) el.innerHTML = "<div><b>Erro ao carregar o app:</b><br/>" + (e.message || e) + "</div>";
+    if (el) el.innerHTML = "<div style='max-width:480px;text-align:left'><b>" + title + "</b><br/><pre style='white-space:pre-wrap;font-size:12px;margin-top:8px'>" + details + "</pre></div>";
+  }
+  window.addEventListener("error", function (e) {
+    var details = (e.error && e.error.stack) ? e.error.stack : (e.message || "Script error.");
+    if (e.filename) details += "\n(" + e.filename + ":" + e.lineno + ":" + e.colno + ")";
+    showBootError("Erro ao carregar o app:", details);
   });
   window.addEventListener("unhandledrejection", function (e) {
-    var el = document.getElementById("boot-status");
-    if (el) el.innerHTML = "<div><b>Erro ao carregar o app:</b><br/>" + (e.reason && e.reason.message ? e.reason.message : e.reason) + "</div>";
+    var r = e.reason;
+    showBootError("Erro (promise) ao carregar o app:", (r && r.stack) ? r.stack : String(r));
   });
 
   // Fora do ambiente Claude não existe window.storage, então simulamos com localStorage
