@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Imaginâe - Gestão de Pedidos</title>
+<meta name="theme-color" content="#B76E79" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" href="./icon-192.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+
+<!-- Tailwind (utilitário via CDN, mesmo usado no app original) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Import map: resolve os pacotes usados dentro do app.jsx sem precisar de build -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1?external=react",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+    "lucide-react": "https://esm.sh/lucide-react@0.383.0?external=react"
+  }
+}
+</script>
+
+<!-- Babel Standalone: transforma o JSX direto no navegador -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  html, body { margin: 0; padding: 0; background: #FDF8F6; }
+  #root { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;color:#B76E79;">
+    Carregando...
+  </div>
+</div>
+
+<!-- Shim: fora do ambiente Claude não existe window.storage, então simulamos usando localStorage -->
+<script>
+  window.storage = {
+    async get(key) {
+      const v = localStorage.getItem(key);
+      if (v === null) throw new Error("key not found: " + key);
+      return { key, value: v, shared: false };
+    },
+    async set(key, value) {
+      localStorage.setItem(key, value);
+      return { key, value, shared: false };
+    },
+    async delete(key) {
+      const existed = localStorage.getItem(key) !== null;
+      localStorage.removeItem(key);
+      return { key, deleted: existed, shared: false };
+    },
+    async list(prefix) {
+      const keys = Object.keys(localStorage).filter((k) => !prefix || k.startsWith(prefix));
+      return { keys, prefix, shared: false };
+    },
+  };
+</script>
+
+<!-- App principal (JSX transformado no navegador pelo Babel) -->
+<script type="text/babel" data-type="module" data-presets="react" src="./app.jsx"></script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
