@@ -257,7 +257,7 @@ export default function App() {
         .font-display { font-family: 'Fraunces', serif; }
         .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #E3C9C0; border-radius: 10px; }
-        .input { width: 100%; padding: 0.6rem 0.75rem; border-radius: 0.65rem; border: 1px solid #EEDDD9; background: #fff; font-size: 0.875rem; color: #3D2C2E; outline: none; }
+        .input { width: 100%; padding: 0.6rem 0.75rem; border-radius: 0.65rem; border: 1px solid #EEDDD9; background: #fff; font-size: 1rem; color: #3D2C2E; outline: none; }
         .input:focus { border-color: #C08497; }
       `),
         React.createElement("div", { className: "min-h-screen w-full", style: { background: "#FDF8F6" } },

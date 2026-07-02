@@ -1,4 +1,4 @@
-const CACHE_NAME = "imaginae-cache-v4";
+const CACHE_NAME = "imaginae-cache-v5";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./app.js"];
 
 self.addEventListener("install", (event) => {
@@ -14,10 +14,16 @@ self.addEventListener("activate", (event) => {
 });
 
 // Estratégia: tenta o cache primeiro; se não tiver, busca na rede e guarda
-// a resposta pra próxima vez (isso inclui React, Babel e Tailwind vindos de CDN).
+// a resposta pra próxima vez (isso inclui React, Tailwind e o SDK do Firebase).
 // Assim, depois da primeira abertura com internet, o app funciona 100% offline.
+// Exceção: chamadas ao vivo de login/banco de dados (Firebase) NUNCA são
+// cacheadas, porque precisam sempre ir na rede pra sincronizar de verdade.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.hostname.includes("googleapis.com") || url.hostname.includes("google.com")) {
+    return; // deixa passar direto pra rede, sem interceptar
+  }
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
